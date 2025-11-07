@@ -1,0 +1,109 @@
+<?php
+
+namespace App\Livewire\Admin;
+
+use App\Models\Gallery;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
+
+class GalleryManager extends Component
+{
+    use WithFileUploads;
+
+    public $galleries;
+    public $title = '';
+    public $description = '';
+    public $image;
+    public $is_active = true;
+    public $sort_order = 0;
+    public $editingId = null;
+    public $isEditing = false;
+    public $tempImage = null;
+    public $editingGallery = null;
+
+    protected $rules = [
+        'title' => 'required|min:3',
+        'description' => 'nullable',
+        'tempImage' => 'nullable|image|max:2048',
+        'is_active' => 'boolean',
+        'sort_order' => 'required|integer|min:0'
+    ];
+
+    public function mount()
+    {
+        $this->startAdd();
+    }
+
+    public function startAdd()
+    {
+        $this->reset(['title', 'description', 'image', 'editingId', 'editingGallery', 'tempImage']);
+        $this->is_active = true;
+        $this->sort_order = Gallery::max('sort_order') + 1;
+        $this->isEditing = false;
+    }
+
+    public function startEdit($id)
+    {
+        $this->editingGallery = Gallery::findOrFail($id);
+        $this->editingId = $id;
+        $this->title = $this->editingGallery->title;
+        $this->description = $this->editingGallery->description;
+        $this->is_active = $this->editingGallery->is_active;
+        $this->sort_order = $this->editingGallery->sort_order;
+        $this->isEditing = true;
+    }
+
+    public function save()
+    {
+        $this->validate();
+
+        if ($this->editingId) {
+            $gallery = Gallery::findOrFail($this->editingId);
+        } else {
+            $gallery = new Gallery();
+        }
+
+        $gallery->title = $this->title;
+        $gallery->description = $this->description;
+        $gallery->is_active = $this->is_active;
+        $gallery->sort_order = $this->sort_order;
+
+        if ($this->tempImage) {
+            if ($gallery->image_path) {
+                Storage::disk('public')->delete($gallery->image_path);
+            }
+            $gallery->image_path = $this->tempImage->store('gallery', 'public');
+        }
+
+        $gallery->save();
+        
+        session()->flash('success', 'Gallery ' . ($this->isEditing ? 'updated' : 'created') . ' successfully.');
+        $this->startAdd();
+    }
+
+    public function toggleActive($id)
+    {
+        $gallery = Gallery::findOrFail($id);
+        $gallery->is_active = !$gallery->is_active;
+        $gallery->save();
+        session()->flash('success', 'Gallery status updated successfully.');
+    }
+
+    public function delete($id)
+    {
+        $gallery = Gallery::findOrFail($id);
+        if ($gallery->image_path) {
+            Storage::disk('public')->delete($gallery->image_path);
+        }
+        $gallery->delete();
+        session()->flash('success', 'Gallery deleted successfully.');
+    }
+
+    public function render()
+    {
+        return view('livewire.admin.gallery-manager', [
+            'galleries' => Gallery::orderBy('sort_order')->get()
+        ]);
+    }
+}
