@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Create required directories
+mkdir -p /var/log/supervisor
+mkdir -p /var/log/nginx
+mkdir -p /var/run
+
 # Function to wait for database
 wait_for_db() {
     if [ "$APP_ENV" = "local" ]; then

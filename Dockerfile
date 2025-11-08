@@ -18,7 +18,13 @@ RUN apt-get update && apt-get install -y \
     npm \
     procps \
     netcat-openbsd \
+    nginx \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
+
+# Configure nginx
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+RUN rm /etc/nginx/sites-enabled/default
 
 # Configure and install PHP extensions
 RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \
@@ -76,14 +82,19 @@ RUN npm run build
 # Switch to non-root user
 USER www-data
 
-# Expose port 9000 for php-fpm
-EXPOSE 9000
+# Set up supervisor
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+RUN mkdir -p /var/log/supervisor
+
+# Expose port 80 for nginx
+EXPOSE 80
 
 # Copy entrypoint and make executable
-USER root
 COPY docker/scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-USER www-data
 
-# Default command: run entrypoint which starts php-fpm
-CMD ["/usr/local/bin/entrypoint.sh"]
+# Switch to root for supervisor (it needs to run as root to manage services)
+USER root
+
+# Start supervisor which will manage nginx and php-fpm
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
