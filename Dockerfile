@@ -56,9 +56,22 @@ RUN composer install --no-scripts --no-interaction --prefer-dist --optimize-auto
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Install node dependencies and build frontend assets (optional, but useful)
-RUN npm ci --silent || npm install --silent \
-    && npm run build --silent || true
+# Install and build frontend assets
+ENV NODE_VERSION=18.x
+RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - \
+    && apt-get update && apt-get install -y nodejs \
+    && npm install -g npm@latest
+
+# Copy package files first to leverage Docker cache
+COPY package*.json ./
+RUN npm ci
+
+# Now copy the rest and build
+COPY resources/js ./resources/js
+COPY resources/sass ./resources/sass
+COPY resources/css ./resources/css
+COPY vite.config.js .
+RUN npm run build
 
 # Switch to non-root user
 USER www-data
