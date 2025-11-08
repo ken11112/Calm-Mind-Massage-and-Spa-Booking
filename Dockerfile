@@ -75,10 +75,7 @@ COPY package*.json ./
 RUN npm install
 
 # Now copy the rest of the frontend files
-COPY resources/ ./resources/
-COPY vite.config.js ./
-COPY postcss.config.js ./
-COPY tailwind.config.js ./
+COPY . .
 
 # Build the assets
 RUN npm run build
