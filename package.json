@@ -1,13 +1,13 @@
 {
     "$schema": "https://json.schemastore.org/package.json",
-    "name": "@ken11112/calm-mind-assets",
+    "name": "@ken11112/calmmind-spa",
     "version": "1.0.0",
     "private": false,
     "type": "module",
     "description": "Frontend assets for Calm Mind Massage and Spa Booking",
     "repository": {
         "type": "git",
-        "url": "https://github.com/ken11112/Calm-Mind-Massage-and-Spa-Booking.git"
+        "url": "git+https://github.com/ken11112/Calm-Mind-Massage-and-Spa-Booking.git"
     },
     "publishConfig": {
         "registry": "https://npm.pkg.github.com"
@@ -19,10 +19,11 @@
     ],
     "main": "resources/js/index.js",
     "scripts": {
-            "build": "vite build",
-            "dev": "vite",
-            "test": "exit 0",
-            "publish:github": "npm publish"
+        "build": "vite build",
+        "dev": "vite",
+        "test": "exit 0",
+        "publish:github": "npm publish",
+        "postinstall": "npm run build"
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",

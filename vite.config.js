@@ -11,4 +11,23 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    css: {
+        preprocessorOptions: {
+            scss: {
+                implementation: 'sass',
+                fiber: false,
+            },
+        },
+    },
+    build: {
+        outDir: 'public/build',
+        manifest: true,
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    vendor: ['bootstrap', '@popperjs/core'],
+                },
+            },
+        },
+    },
 });
