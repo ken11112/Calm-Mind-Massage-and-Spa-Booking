@@ -1,4 +1,0 @@
-Get-ChildItem -Recurse -Filter *.php | ForEach-Object { php -l $_.FullName }
-
-
-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
