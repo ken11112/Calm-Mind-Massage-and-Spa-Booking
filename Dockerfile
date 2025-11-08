@@ -62,22 +62,49 @@ RUN composer install --no-scripts --no-interaction --prefer-dist --optimize-auto
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Install and build frontend assets
-ENV NODE_VERSION=18.x
-RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - \
-    && apt-get update && apt-get install -y nodejs \
-    && npm install -g npm@latest
+# Install and build frontend assets using a multi-stage build
+FROM node:18 AS frontend-builder
+WORKDIR /app
+
+# Set NODE_ENV temporarily to false during build
+ENV NODE_ENV=development
+ENV VITE_APP_ENV=production
 
 # Copy package files first to leverage Docker cache
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
-# Now copy the rest and build
-COPY resources/js ./resources/js
-COPY resources/sass ./resources/sass
-COPY resources/css ./resources/css
-COPY vite.config.js .
+# Now copy the rest of the frontend files
+COPY resources/ ./resources/
+COPY vite.config.js ./
+COPY postcss.config.js ./
+COPY tailwind.config.js ./
+
+# Build the assets
 RUN npm run build
+
+# Continue with the main PHP image
+FROM php:8.2-fpm
+
+# Install system dependencies (including libs required by extensions)
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    libzip-dev \
+    libicu-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    zlib1g-dev \
+    procps \
+    netcat-openbsd \
+    nginx \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
 
 # Switch to non-root user
 USER www-data
@@ -92,6 +119,9 @@ EXPOSE 80
 # Copy entrypoint and make executable
 COPY docker/scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Copy built assets from frontend stage
+COPY --from=frontend-builder /app/public/build /var/www/public/build
 
 # Switch to root for supervisor (it needs to run as root to manage services)
 USER root
