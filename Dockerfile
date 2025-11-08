@@ -1,6 +1,29 @@
+# Frontend build stage
+FROM node:18-slim AS frontend-builder
+
+WORKDIR /app
+
+# Set environment variables for the build
+ENV NODE_ENV=development
+ENV VITE_APP_ENV=production
+
+# Install dependencies first (layer caching)
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy all necessary build files
+COPY vite.config.js ./
+COPY postcss.config.mjs ./
+COPY tailwind.config.mjs ./
+COPY resources/ ./resources/
+
+# Build frontend
+RUN npm run build
+
+# PHP application stage
 FROM php:8.2-fpm
 
-# Install system dependencies (including libs required by extensions)
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -14,8 +37,6 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     zlib1g-dev \
-    nodejs \
-    npm \
     procps \
     netcat-openbsd \
     nginx \
@@ -37,91 +58,48 @@ RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \
     && docker-php-ext-install zip \
     && docker-php-ext-install intl
 
-# Install Composer binary from official image
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www
 
-# Create directories and set permissions early
-RUN mkdir -p /var/www/storage/app/public \
+# Create required directories
+RUN mkdir -p \
+    /var/www/storage/app/public \
     /var/www/storage/framework/sessions \
     /var/www/storage/framework/views \
     /var/www/storage/framework/cache \
     /var/www/storage/logs \
-    /var/www/bootstrap/cache \
-    && chown -R www-data:www-data /var/www
+    /var/www/bootstrap/cache
 
 # Copy application files
-COPY . /var/www
-
-# Install PHP dependencies (do this as root so composer can write vendor)
-RUN composer install --no-scripts --no-interaction --prefer-dist --optimize-autoloader || (composer diagnose && composer --version && exit 1)
-
-# Set correct permissions for storage and bootstrap cache
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
-
-# Install and build frontend assets using a multi-stage build
-FROM node:18 AS frontend-builder
-WORKDIR /app
-
-# Set NODE_ENV temporarily to false during build
-ENV NODE_ENV=development
-ENV VITE_APP_ENV=production
-
-# Copy package files first to leverage Docker cache
-COPY package*.json ./
-RUN npm install
-
-# Now copy the rest of the frontend files
 COPY . .
+COPY --from=frontend-builder /app/public/build /var/www/public/build
 
-# Build the assets
-RUN npm run build
+# Install PHP dependencies
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-# Continue with the main PHP image
-FROM php:8.2-fpm
-
-# Install system dependencies (including libs required by extensions)
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    libzip-dev \
-    libicu-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    zlib1g-dev \
-    procps \
-    netcat-openbsd \
-    nginx \
-    supervisor \
-    && rm -rf /var/lib/apt/lists/*
-
-# Switch to non-root user
-USER www-data
+# Set permissions
+RUN chown -R www-data:www-data \
+    /var/www/storage \
+    /var/www/bootstrap/cache \
+    /var/www/public \
+    && chmod -R 775 \
+    /var/www/storage \
+    /var/www/bootstrap/cache \
+    /var/www/public
 
 # Set up supervisor
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-RUN mkdir -p /var/log/supervisor
 
-# Expose port 80 for nginx
-EXPOSE 80
-
-# Copy entrypoint and make executable
+# Copy entrypoint script
 COPY docker/scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Copy built assets from frontend stage
-COPY --from=frontend-builder /app/public/build /var/www/public/build
+# Expose port 80
+EXPOSE 80
 
-# Switch to root for supervisor (it needs to run as root to manage services)
-USER root
-
-# Start supervisor which will manage nginx and php-fpm
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Set entrypoint and command
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
