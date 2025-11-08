@@ -41,7 +41,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
@@ -49,13 +49,15 @@ return [
 
         's3' => [
             'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            // Prefer the new STORAGE_AWS_* env vars (to avoid platform reserved AWS_* names),
+            // but fall back to the standard AWS_* variables if present.
+            'key' => env('STORAGE_AWS_KEY', env('AWS_ACCESS_KEY_ID')),
+            'secret' => env('STORAGE_AWS_SECRET', env('AWS_SECRET_ACCESS_KEY')),
+            'region' => env('STORAGE_AWS_REGION', env('AWS_DEFAULT_REGION')),
+            'bucket' => env('STORAGE_AWS_BUCKET', env('AWS_BUCKET')),
+            'url' => env('STORAGE_AWS_URL', env('AWS_URL')),
+            'endpoint' => env('STORAGE_AWS_ENDPOINT', env('AWS_ENDPOINT')),
+            'use_path_style_endpoint' => env('STORAGE_AWS_USE_PATH_STYLE', env('AWS_USE_PATH_STYLE_ENDPOINT', false)),
             'throw' => false,
             'report' => false,
         ],
