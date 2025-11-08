@@ -21,8 +21,15 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure and install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) pdo_mysql mbstring exif pcntl bcmath gd zip intl
+RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd \
+    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-install mbstring \
+    && docker-php-ext-install exif \
+    && docker-php-ext-install pcntl \
+    && docker-php-ext-install bcmath \
+    && docker-php-ext-install zip \
+    && docker-php-ext-install intl
 
 # Install Composer binary from official image
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
