@@ -3,7 +3,6 @@ services:
     name: calm-mind-massage
     env: php
     plan: free
-    phpVersion: '8.2'
     buildCommand: composer install --no-interaction --prefer-dist --optimize-autoloader && npm install && npm run build && php artisan optimize && php artisan key:generate --force && php artisan migrate:fresh --seed --force
     startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
     envVars:
