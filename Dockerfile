@@ -20,7 +20,7 @@ COPY public/ ./public/
 RUN npm run build
 
 # Verify build output exists
-RUN ls -la public/build/ && cat public/build/manifest.json
+RUN test -f public/build/.vite/manifest.json || (echo "ERROR: manifest.json not found!" && ls -la public/build/ && exit 1)
 
 # PHP application stage
 FROM php:8.2-apache
@@ -61,7 +61,7 @@ RUN rm -rf public/build
 COPY --from=frontend-builder /app/public/build ./public/build
 
 # Verify manifest exists
-RUN test -f public/build/manifest.json || (echo "ERROR: manifest.json not found!" && exit 1)
+RUN test -f public/build/.vite/manifest.json || (echo "ERROR: manifest.json not found!" && ls -la public/build/ && exit 1)
 
 # Create database directory
 RUN mkdir -p database && touch database/database.sqlite
