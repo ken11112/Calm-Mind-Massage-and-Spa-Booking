@@ -13,8 +13,8 @@ RUN npm ci
 
 # Copy all necessary build files
 COPY vite.config.js ./
-COPY postcss.config.mjs ./
-COPY tailwind.config.mjs ./
+COPY postcss.config.js ./
+COPY tailwind.config.js ./
 COPY resources/ ./resources/
 
 # Build frontend
