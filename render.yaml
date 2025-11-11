@@ -3,16 +3,9 @@ services:
     name: calm-mind-massage
     env: php
     plan: free
-    runtime: php
     phpVersion: '8.2'
-    buildCommand: >
-      composer install --no-interaction --prefer-dist --optimize-autoloader &&
-      npm install &&
-      npm run build
-    startCommand: >
-      php artisan key:generate --force &&
-      php artisan migrate:fresh --seed --force &&
-      php -S 0.0.0.0:${PORT} -t public/
+    buildCommand: composer install --no-interaction --prefer-dist --optimize-autoloader && npm install && npm run build
+    startCommand: php artisan key:generate --force && php artisan migrate:fresh --seed --force && php -S 0.0.0.0:${PORT} -t public/
     envVars:
       - key: APP_ENV
         value: production
