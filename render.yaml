@@ -3,6 +3,8 @@ services:
     name: calm-mind-massage
     env: php
     plan: free
+    runtime: php
+    phpVersion: '8.2'
     buildCommand: >
       composer install --no-interaction --prefer-dist --optimize-autoloader &&
       npm install &&
