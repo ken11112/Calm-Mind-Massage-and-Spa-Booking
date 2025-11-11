@@ -21,7 +21,7 @@ COPY resources/ ./resources/
 RUN npm run build
 
 # PHP application stage
-FROM php:8.2-fpm
+FROM php:8.2-apache
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -34,47 +34,48 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
     libicu-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    zlib1g-dev \
-    procps \
-    netcat-openbsd \
-    nginx \
-    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
-# Configure nginx
-COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-RUN rm /etc/nginx/sites-enabled/default
-
-# Configure and install PHP extensions
-RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd \
-    && docker-php-ext-install pdo_mysql \
-    && docker-php-ext-install mbstring \
-    && docker-php-ext-install exif \
-    && docker-php-ext-install pcntl \
-    && docker-php-ext-install bcmath \
-    && docker-php-ext-install zip \
-    && docker-php-ext-install intl
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_sqlite
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
-WORKDIR /var/www
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
 
-# Create required directories
-RUN mkdir -p \
-    /var/www/storage/app/public \
-    /var/www/storage/framework/sessions \
-    /var/www/storage/framework/views \
-    /var/www/storage/framework/cache \
-    /var/www/storage/logs \
-    /var/www/bootstrap/cache
+# Set working directory
+WORKDIR /var/www/html
 
 # Copy application files
 COPY . .
+
+# Copy built frontend assets from builder
+COPY --from=frontend-builder /app/public/build ./public/build
+
+# Install PHP dependencies
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+# Run Laravel setup commands
+RUN php artisan key:generate --force && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
+
+# Set Apache document root to public folder
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html/storage && \
+    chmod -R 755 /var/www/html/bootstrap/cache
+
+# Expose port
+EXPOSE 80
+
+# Start Apache
+CMD ["apache2-foreground"]
 COPY --from=frontend-builder /app/public/build /var/www/public/build
 
 # Install PHP dependencies
