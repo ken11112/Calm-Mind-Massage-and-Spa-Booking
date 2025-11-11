@@ -62,8 +62,9 @@ RUN chown -R www-data:www-data /var/www/html/database && chmod -R 775 /var/www/h
 # Ensure .env exists
 RUN if [ ! -f .env ]; then cp .env.example .env; fi
 
-# Copy built frontend assets from builder
-COPY --from=frontend-builder /app/public/build ./public/build
+# Copy built frontend assets from builder stage
+RUN mkdir -p /var/www/html/public/build
+COPY --from=frontend-builder /app/public/build/ /var/www/html/public/build/
 
 # Install PHP dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
