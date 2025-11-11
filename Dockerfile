@@ -79,33 +79,4 @@ RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/p
 # Expose port
 EXPOSE 80
 
-# Start Apache
 CMD ["apache2-foreground"]
-COPY --from=frontend-builder /app/public/build /var/www/public/build
-
-# Install PHP dependencies
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-
-# Set permissions
-RUN chown -R www-data:www-data \
-    /var/www/storage \
-    /var/www/bootstrap/cache \
-    /var/www/public \
-    && chmod -R 775 \
-    /var/www/storage \
-    /var/www/bootstrap/cache \
-    /var/www/public
-
-# Set up supervisor
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Copy entrypoint script
-COPY docker/scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Expose port 80
-EXPOSE 80
-
-# Set entrypoint and command
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
