@@ -53,6 +53,9 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
+# Ensure SQLite database file exists
+RUN mkdir -p /var/www/html/database && touch /var/www/html/database/database.sqlite
+
 # Ensure .env exists
 RUN if [ ! -f .env ]; then cp .env.example .env; fi
 
