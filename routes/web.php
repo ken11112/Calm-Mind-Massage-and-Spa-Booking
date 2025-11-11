@@ -41,7 +41,3 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('facebook-settings', [\App\Http\Controllers\Admin\FacebookSettingsController::class, 'index'])->name('admin.facebook.index');
     Route::post('facebook-settings', [\App\Http\Controllers\Admin\FacebookSettingsController::class, 'update'])->name('admin.facebook.update');
 });
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
