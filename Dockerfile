@@ -36,6 +36,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
     libicu-dev \
+    libsqlite3-dev \
     default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
