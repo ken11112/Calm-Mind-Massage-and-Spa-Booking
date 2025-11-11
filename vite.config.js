@@ -18,6 +18,13 @@ export default defineConfig({
             plugins: []
         }
     },
+    server: {
+        allowedHosts: [
+            'calm-mind-massage-tupi.onrender.com',
+            'localhost',
+            '127.0.0.1',
+        ],
+    },
     build: {
         outDir: 'public/build',
         manifest: true,
