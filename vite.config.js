@@ -20,7 +20,7 @@ export default defineConfig({
     },
     server: {
         allowedHosts: [
-            'calm-mind-ybth.onrender.com',
+            'https://calm-mind-massage-tupi.onrender.com',
             'localhost',
             '127.0.0.1',
         ],
