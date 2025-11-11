@@ -56,6 +56,9 @@ COPY . .
 # Ensure SQLite database file exists
 RUN mkdir -p /var/www/html/database && touch /var/www/html/database/database.sqlite
 
+# Ensure database directory and file have proper permissions for www-data
+RUN chown -R www-data:www-data /var/www/html/database && chmod -R 775 /var/www/html/database
+
 # Ensure .env exists
 RUN if [ ! -f .env ]; then cp .env.example .env; fi
 
