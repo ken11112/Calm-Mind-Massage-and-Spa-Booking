@@ -1,10 +1,9 @@
 {
-    "$schema": "https://json.schemastore.org/package.json",
     "name": "@ken11112/calmmind-spa",
     "version": "1.0.0",
     "private": false,
-    "type": "module",
     "description": "Frontend assets for Calm Mind Massage and Spa Booking",
+    "type": "module",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/ken11112/Calm-Mind-Massage-and-Spa-Booking.git"
@@ -19,27 +18,25 @@
     ],
     "main": "resources/js/index.js",
     "scripts": {
-           "dev": "vite",
-           "build": "vite build",
-           "preview": "vite preview"
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
     },
     "dependencies": {
-        "@popperjs/core": "^2.11.6",
-        "@tailwindcss/vite": "^4.0.0",
-        "axios": "^1.11.0",
-        "bootstrap": "^5.2.3",
-        "laravel-vite-plugin": "^2.0.0",
-        "sass": "^1.56.1",
-        "postcss": "^8.4.23",
-        "autoprefixer": "^10.4.14",
-        "tailwindcss": "^4.0.0",
-        "vite": "^7.0.7",
-        "@tailwindcss/forms": "^0.5.10",
-        "@tailwindcss/typography": "^0.5.19",
-        "alpinejs": "^3.15.1"
+        "@popperjs/core": "^2.11.8",
+        "@tailwindcss/forms": "^0.5.7",
+        "@tailwindcss/typography": "^0.5.10",
+        "alpinejs": "^3.13.3",
+        "axios": "^1.6.2",
+        "bootstrap": "^5.3.2",
+        "laravel-vite-plugin": "^1.0.0",
+        "sass": "^1.69.5",
+        "vite": "^5.0.7"
     },
     "devDependencies": {
-        "concurrently": "^9.0.1",
+        "autoprefixer": "^10.4.16",
+        "postcss": "^8.4.32",
+        "tailwindcss": "^3.4.0",
         "gh-pages": "^6.3.0"
     }
 }

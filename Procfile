@@ -1,0 +1,1 @@
+web: composer install --no-interaction --prefer-dist --optimize-autoloader && npm install && npm run build && php artisan key:generate --force && php artisan migrate:fresh --seed --force && php artisan serve --host=0.0.0.0 --port=${PORT}
