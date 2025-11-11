@@ -53,6 +53,9 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
+# Ensure .env exists
+RUN if [ ! -f .env ]; then cp .env.example .env; fi
+
 # Copy built frontend assets from builder
 COPY --from=frontend-builder /app/public/build ./public/build
 
