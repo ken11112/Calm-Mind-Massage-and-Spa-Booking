@@ -19,10 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Configure Vite manifest path for Vite v5 (.vite/manifest.json structure)
-        // Only call useBuildPath when the underlying Vite class actually provides it
-        if (class_exists(\Illuminate\Foundation\Vite::class) && method_exists(\Illuminate\Foundation\Vite::class, 'useBuildPath')) {
-            \Illuminate\Support\Facades\Vite::useBuildPath('build/.vite');
+        // Vite v5 with Laravel plugin creates manifest at public/build/.vite/manifest.json
+        // Configure Laravel to look in the correct location
+        if (class_exists(\Illuminate\Foundation\Vite::class)) {
+            if (method_exists(\Illuminate\Foundation\Vite::class, 'useManifestFilename')) {
+                \Illuminate\Support\Facades\Vite::useManifestFilename('.vite/manifest.json');
+            }
         }
 
         // Ensure admin middleware is aliased for all Laravel versions / cache states
@@ -35,4 +37,3 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 }
-
