@@ -1,73 +1,73 @@
-<section class="card max-w-3xl mx-auto">
-    <header class="flex items-center space-x-4 mb-6">
-        <div class="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white">
+<section class="card max-w-3xl mx-auto p-4 sm:p-6">
+    <header class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-6">
+        <div class="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3v4h6v-4c0-1.657-1.343-3-3-3z"/></svg>
         </div>
         <div>
-            <h2 class="text-2xl font-semibold">Book Your Appointment</h2>
-            <p class="text-sm text-gray-500">Choose a service and pick a convenient date & time.</p>
+            <h2 class="text-xl sm:text-2xl font-semibold">Book Your Appointment</h2>
+            <p class="text-xs sm:text-sm text-gray-500">Choose a service and pick a convenient date & time.</p>
         </div>
     </header>
 
     <form wire:submit.prevent="saveBooking">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <!-- Service Selection -->
             <div>
-                <label for="service" class="block text-sm font-medium text-gray-700 mb-2">Select Service</label>
-                <select id="service" wire:model.live="selectedService" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                <label for="service" class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Select Service</label>
+                <select id="service" wire:model.live="selectedService" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-200">
                     <option value="">Choose a service...</option>
                     @foreach($services as $service)
                         <option value="{{ $service->id }}">{{ $service->name }} — ₱{{ number_format($service->price, 2) }}</option>
                     @endforeach
                 </select>
-                @error('selectedService') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                @error('selectedService') <span class="text-red-500 text-xs sm:text-sm mt-1 block">{{ $message }}</span> @enderror
             </div>
 
             <!-- Price Display -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Price</label>
-                <div class="text-3xl font-extrabold text-gradient bg-clip-text text-transparent" style="background-image:linear-gradient(90deg,#2563eb,#1e40af)">
+                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Price</label>
+                <div class="text-2xl sm:text-3xl font-extrabold text-gradient bg-clip-text text-transparent" style="background-image:linear-gradient(90deg,#2563eb,#1e40af)">
                     ₱{{ $price ? number_format($price, 2) : '0.00' }}
                 </div>
             </div>
 
             <!-- Client Name -->
             <div>
-                <label for="clientName" class="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
-                <input type="text" id="clientName" wire:model="clientName" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Enter your full name">
-                @error('clientName') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <label for="clientName" class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Your Name</label>
+                <input type="text" id="clientName" wire:model="clientName" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Enter your full name">
+                @error('clientName') <span class="text-red-500 text-xs sm:text-sm mt-1 block">{{ $message }}</span> @enderror
             </div>
 
             <!-- Contact Number -->
             <div>
-                <label for="contactNumber" class="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
-                <input type="text" id="contactNumber" wire:model="contactNumber" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Enter your contact number">
-                @error('contactNumber') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <label for="contactNumber" class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Contact Number</label>
+                <input type="text" id="contactNumber" wire:model="contactNumber" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Enter your contact number">
+                @error('contactNumber') <span class="text-red-500 text-xs sm:text-sm mt-1 block">{{ $message }}</span> @enderror
             </div>
 
             <!-- Booking Date -->
             <div>
-                <label for="bookingDate" class="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                <input type="date" id="bookingDate" wire:model="bookingDate" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                @error('bookingDate') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <label for="bookingDate" class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Date</label>
+                <input type="date" id="bookingDate" wire:model="bookingDate" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-200">
+                @error('bookingDate') <span class="text-red-500 text-xs sm:text-sm mt-1 block">{{ $message }}</span> @enderror
             </div>
 
             <!-- Booking Time -->
             <div>
-                <label for="bookingTime" class="block text-sm font-medium text-gray-700 mb-2">Time</label>
-                <input type="time" id="bookingTime" wire:model="bookingTime" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                @error('bookingTime') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <label for="bookingTime" class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Time</label>
+                <input type="time" id="bookingTime" wire:model="bookingTime" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-200">
+                @error('bookingTime') <span class="text-red-500 text-xs sm:text-sm mt-1 block">{{ $message }}</span> @enderror
             </div>
 
             <!-- Notes -->
             <div class="md:col-span-2">
-                <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
-                <textarea id="notes" wire:model="notes" rows="3" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Any special requests or notes..."></textarea>
+                <label for="notes" class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
+                <textarea id="notes" wire:model="notes" rows="3" class="w-full rounded-lg border border-gray-200 shadow-sm px-3 py-2 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Any special requests or notes..."></textarea>
             </div>
         </div>
 
         <div class="mt-6">
-            <button type="submit" class="w-full cta-btn">
+            <button type="submit" class="w-full cta-btn min-h-[44px] sm:min-h-[48px]">
                 Confirm Booking
             </button>
         </div>

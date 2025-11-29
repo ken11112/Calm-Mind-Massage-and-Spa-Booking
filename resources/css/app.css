@@ -20,24 +20,93 @@
     .cta-btn {
         background: linear-gradient(90deg, var(--brand), var(--brand-dark));
         color: white;
-        @apply px-6 py-2 rounded-full text-sm font-semibold shadow hover:opacity-95;
+        @apply px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-semibold shadow hover:opacity-95 transition-opacity;
     }
 
     .card {
-        @apply bg-white rounded-xl shadow p-6;
+        @apply bg-white rounded-xl shadow p-4 sm:p-6;
     }
 
     .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.5rem;
+        @media (min-width: 640px) {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+        @media (min-width: 1024px) {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+    }
+
+    /* Responsive text sizes */
+    .text-responsive-h1 {
+        @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold;
+    }
+
+    .text-responsive-h2 {
+        @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold;
+    }
+
+    .text-responsive-h3 {
+        @apply text-lg sm:text-xl md:text-2xl font-semibold;
+    }
+
+    /* Responsive padding utilities */
+    .px-responsive {
+        @apply px-3 sm:px-4 md:px-6 lg:px-8;
+    }
+
+    .py-responsive {
+        @apply py-4 sm:py-6 md:py-8 lg:py-12;
+    }
+
+    /* Responsive gap utilities */
+    .gap-responsive {
+        @apply gap-2 sm:gap-3 md:gap-4 lg:gap-6;
+    }
+
+    /* Container responsive utilities */
+    .container-responsive {
+        @apply px-3 sm:px-4 md:px-6 lg:px-8 mx-auto;
     }
 }
 
 /* small helpers */
-.site-footer a { @apply hover:text-gray-300 }
+.site-footer a { @apply hover:text-gray-300 transition-colors }
 
-/* Responsive tweaks for hero spacing */
-@media (min-width: 768px) {
+/* Mobile-first responsive tweaks */
+@media (max-width: 640px) {
+    .hero-inner { @apply py-8 }
+    .section-inner { @apply py-6 }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .hero-inner { @apply py-12 }
+    .section-inner { @apply py-10 }
+}
+
+@media (min-width: 1025px) {
     .hero-inner { @apply py-20 }
+    .section-inner { @apply py-16 }
+}
+
+/* Responsive form elements */
+@layer components {
+    .form-input-responsive {
+        @apply w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base;
+    }
+
+    .btn-responsive {
+        @apply px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base;
+    }
+}
+
+/* Touch-friendly mobile controls */
+@media (max-width: 640px) {
+    button, a, input[type="submit"], input[type="button"] {
+        @apply min-h-[44px];
+    }
 }

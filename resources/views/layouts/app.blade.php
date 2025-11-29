@@ -108,35 +108,63 @@
             </div>
         </div>
     </div>
-    <header class="bg-white shadow-sm">
-        <div class="container mx-auto px-6">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between py-4">
-                <a href="{{ route('home') }}" class="text-2xl font-bold text-gray-800">Calm Mind Massage</a>
+                <a href="{{ route('home') }}" class="flex items-center space-x-2">
+                    <i class="fas fa-spa text-cyan-600 text-2xl"></i>
+                    <span class="text-xl sm:text-2xl font-bold text-gray-800 hidden sm:inline">Calm Mind Massage</span>
+                    <span class="text-lg sm:text-xl font-bold text-gray-800 sm:hidden">Calm Mind</span>
+                </a>
 
-                <nav class="space-x-6 text-gray-700">
-                    <a href="{{ route('home') }}" class="hover:text-gray-900">Home</a>
-                    <a href="{{ route('gallery') }}" class="hover:text-gray-900">Gallery</a>
-                    <a href="{{ route('booking.create') }}" class="hover:text-gray-900">Book Now</a>
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-6 text-gray-700">
+                    <a href="{{ route('home') }}" class="hover:text-cyan-600 transition">Home</a>
+                    <a href="{{ route('gallery') }}" class="hover:text-cyan-600 transition">Gallery</a>
+                    <a href="{{ route('booking.create') }}" class="hover:text-cyan-600 transition">Book Now</a>
                     @auth
                         @if(auth()->user()->is_admin)
-                            <a href="{{ route('admin.dashboard') }}" class="hover:text-gray-900">Admin</a>
+                            <a href="{{ route('admin.dashboard') }}" class="hover:text-cyan-600 transition">Admin</a>
                         @endif
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="hover:text-gray-900">Logout</button>
+                            <button type="submit" class="hover:text-cyan-600 transition">Logout</button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="hover:text-gray-900">Login</a>
+                        <a href="{{ route('login') }}" class="hover:text-cyan-600 transition">Login</a>
                     @endauth
                 </nav>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-700 hover:text-cyan-600 transition p-2">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
             </div>
+
+            <!-- Mobile Navigation -->
+            <nav id="mobile-menu" class="hidden md:hidden pb-4 border-t pt-4 space-y-2">
+                <a href="{{ route('home') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition">Home</a>
+                <a href="{{ route('gallery') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition">Gallery</a>
+                <a href="{{ route('booking.create') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition">Book Now</a>
+                @auth
+                    @if(auth()->user()->is_admin)
+                        <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition">Admin</a>
+                    @endif
+                    <form method="POST" action="{{ route('logout') }}" class="inline w-full">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition">Logout</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition">Login</a>
+                @endauth
+            </nav>
         </div>
     </header>
 
-    <main class="container mx-auto px-6 py-8">
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         @if(session('success'))
             <div class="mb-6">
-                <div class="bg-green-50 border-l-4 border-green-400 p-4">
+                <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded">
                     <p class="text-green-700">{{ session('success') }}</p>
                 </div>
             </div>
@@ -144,7 +172,7 @@
 
         @if(session('error'))
             <div class="mb-6">
-                <div class="bg-red-50 border-l-4 border-red-400 p-4">
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded">
                     <p class="text-red-700">{{ session('error') }}</p>
                 </div>
             </div>
@@ -154,25 +182,25 @@
     </main>
 
     <footer class="site-footer bg-gray-900 text-white mt-12">
-        <div class="container mx-auto px-6 py-10">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div>
                     <h4 class="font-semibold mb-3">Contact Us</h4>
                     <p class="text-sm text-gray-300">Phone: 09631064414</p>
-                    <p class="text-sm"><a href="https://www.facebook.com/gravyAA22" class="text-gray-300 hover:text-white">Facebook: /gravyAA22</a></p>
+                    <p class="text-sm"><a href="https://www.facebook.com/gravyAA22" class="text-gray-300 hover:text-white transition">Facebook: /gravyAA22</a></p>
                 </div>
                 <div>
                     <h4 class="font-semibold mb-3">Quick Links</h4>
                     <ul class="text-sm text-gray-300 space-y-1">
-                        <li><a href="{{ route('home') }}">Home</a></li>
-                        <li><a href="{{ route('gallery') }}">Gallery</a></li>
-                        <li><a href="{{ route('booking.create') }}">Book Now</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-white transition">Home</a></li>
+                        <li><a href="{{ route('gallery') }}" class="hover:text-white transition">Gallery</a></li>
+                        <li><a href="{{ route('booking.create') }}" class="hover:text-white transition">Book Now</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-semibold mb-3">Follow Us</h4>
                     <div class="flex items-center space-x-4">
-                        <a href="https://www.facebook.com/gravyAA22" class="text-2xl text-gray-300 hover:text-white"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.facebook.com/gravyAA22" class="text-2xl text-gray-300 hover:text-white transition"><i class="fab fa-facebook"></i></a>
                     </div>
                 </div>
             </div>
@@ -186,6 +214,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loadingScreen = document.getElementById('loading-screen');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
 
             // Hide initial loader after a brief moment
             setTimeout(() => loadingScreen.classList.add('hidden'), 400);
@@ -204,6 +234,27 @@
                     a.addEventListener('click', () => loadingScreen.classList.remove('hidden'));
                 }
             });
+
+            // Mobile menu toggle
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+
+                // Close menu when a link is clicked
+                mobileMenu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                    });
+                });
+
+                // Close menu when a form is submitted
+                mobileMenu.querySelectorAll('form').forEach(form => {
+                    form.addEventListener('submit', () => {
+                        mobileMenu.classList.add('hidden');
+                    });
+                });
+            }
         });
     </script>
 </body>
